@@ -1,11 +1,15 @@
 library(shiny)
-library(shinyjs)
 library(ggplot2)
-library(ggthemes)
 library(dplyr)
 library(lazyeval)
+library(hashmap)
+library(ggrepel)
 h1b_df <- readRDS("data/h1b_shiny.rds")
 source("helpers.R")
+
+metric_lab_hash <- hashmap(c("TotalApps","CertiApps","Wage"),c("TOTAL H-1B VISA APPLICATIONS", "CERTIFIED H-1B VISA APPLICATIONS","MEDIAN PREVAILING WAGE"))
+
+USA = map_data(map = "usa")
 
 # Define server logic for slider examples
 shinyServer(function(input, output) {
@@ -15,7 +19,8 @@ shinyServer(function(input, output) {
                                     employer_list = c(), 
                                     year = as.character(seq(2011,2016)), 
                                     metric = "TotalApps",
-                                    location = "USA")
+                                    location = "USA",
+                                    Ntop = 3)
   
   observeEvent(input$compute,{
     job_list <-tolower(trimws(c(input$job_type_1,input$job_type_2,input$job_type_3)))
@@ -31,6 +36,8 @@ shinyServer(function(input, output) {
     reactive_inputs$metric <- input$metric
     
     reactive_inputs$location <- input$location
+    
+    reactive_inputs$Ntop <- input$Ntop
   })
   
 
@@ -116,7 +123,7 @@ shinyServer(function(input, output) {
   
   # Job Type Input
   job_plot_input <- reactive({
-     plot_input(data_input(),"JOB_INPUT_CLASS", "YEAR",reactive_inputs$metric,filter = TRUE, Ntop = 3)
+     plot_input(data_input(),"JOB_INPUT_CLASS", "YEAR",reactive_inputs$metric,filter = TRUE, Ntop = reactive_inputs$Ntop)
    })
 
   output$job_type_table <- renderDataTable({
@@ -126,13 +133,14 @@ shinyServer(function(input, output) {
   
   # Job Type Output
   output$job_type <- renderPlot({
-    plot_output(job_plot_input(),"JOB_INPUT_CLASS", "YEAR", reactive_inputs$metric)
+    plot_output(job_plot_input(),"JOB_INPUT_CLASS", "YEAR", reactive_inputs$metric, "JOB TYPE",
+                metric_lab_hash[[reactive_inputs$metric]])
   })
 
 
   # Locations Input
   location_plot_input <- reactive({
-    plot_input(data_input(),"WORKSITE", "YEAR",reactive_inputs$metric, filter = TRUE, Ntop = 3)
+    plot_input(data_input(),"WORKSITE", "YEAR",reactive_inputs$metric, filter = TRUE, Ntop = reactive_inputs$Ntop)
   })
 
   output$location_table <- renderDataTable({
@@ -142,13 +150,14 @@ shinyServer(function(input, output) {
   
   # Locations Output
   output$location <- renderPlot({
-    plot_output(location_plot_input(),"WORKSITE", "YEAR", reactive_inputs$metric)
+    plot_output(location_plot_input(),"WORKSITE", "YEAR", reactive_inputs$metric,"LOCATION", 
+                metric_lab_hash[[reactive_inputs$metric]])
   })
 
 
    # Employers Input
    employer_plot_input <- reactive({
-     plot_input(data_input(),"EMPLOYER_NAME", "YEAR",reactive_inputs$metric, filter = TRUE, Ntop = 3)
+     plot_input(data_input(),"EMPLOYER_NAME", "YEAR",reactive_inputs$metric, filter = TRUE, Ntop = reactive_inputs$Ntop)
    })
 
    output$employertable <- renderDataTable({
@@ -158,12 +167,30 @@ shinyServer(function(input, output) {
 
    # Employer Output
    output$employer <- renderPlot({
-     plot_output(employer_plot_input(),"EMPLOYER_NAME", "YEAR",reactive_inputs$metric)
+     plot_output(employer_plot_input(),"EMPLOYER_NAME", "YEAR",reactive_inputs$metric, "EMPLOYER",
+                 metric_lab_hash[[reactive_inputs$metric]])
    })
+   
+   # Map Output
+   # plotting map for latest year in year range for input metric
+   output$map <- renderPlot({
+     map_gen(data_input(),reactive_inputs$metric,USA, Ntop = reactive_inputs$Ntop)
+   })
+   
+   output$map_table <- renderDataTable({
+     data_input() %>%
+       mutate(certified =ifelse(CASE_STATUS == "CERTIFIED",1,0)) %>%
+       group_by(WORKSITE) %>%
+       summarise(TotalApps = n(),CertiApps = sum(certified), Wage = median(PREVAILING_WAGE))
+   }, options = list(lengthMenu = c(10, 20,50), pageLength = 10))
    
    observeEvent(input$resetAll, {
      reset("inputs")
    })
+   
+   # session$onSessionEnded(function() {
+   #   q()
+   # })
    
    # observeEvent(input$resetEmployer, {
    #   reset("employer")

@@ -33,15 +33,31 @@ shinyUI(
   fluidPage(
       
   useShinyjs(),  
-    
-  #theme = shinythemes::shinytheme("yeti"),
+  #shinythemes::themeSelector(),  
+  theme = shinythemes::shinytheme("slate"),
   
   # Application title
-  titlePanel("H1-B Visa Petitions Data Exploration"),
+  titlePanel("H-1B Visa Petitions Data Exploration"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
+      
+      tags$head(tags$style(type="text/css", "
+             #loadmessage {
+                           position: fixed;
+                           top: 0px;
+                           left: 0px;
+                           width: 100%;
+                           padding: 5px 0px 5px 0px;
+                           text-align: center;
+                           font-weight: bold;
+                           font-size: 100%;
+                           color: #000000;
+                           background-color: #CCFF66;
+                           z-index: 105;
+                           }
+                           ")),
       
       div(
       
@@ -92,9 +108,18 @@ shinyUI(
            textInput("employer_1", "Employer 1",""),
            textInput("employer_2", "Employer 2",""),
            textInput("employer_3", "Employer 3", "")
-         )
+         ),
+         
+         sliderInput("Ntop",
+                     h3("No. of categories in plots"),
+                     min = 3,
+                     max = 15,
+                     value = 3)
+         
          #p(actionButton("updateEmployer", "Update Employers"), actionButton("resetEmployer", "Reset Employers"))
-       )
+       ),
+      conditionalPanel(condition="$('html').hasClass('shiny-busy')",
+                       tags$div("Loading...",id="loadmessage"))
     ),
     
     # Show a plot of the generated distribution
@@ -132,7 +157,11 @@ shinyUI(
                   plotOutput("employer"),
                   br(),
                   br(),
-                  dataTableOutput("employertable"))
+                  dataTableOutput("employertable")),
+        tabPanel("Map",
+                 plotOutput("map"),
+                 br(),
+                 dataTableOutput("map_table"))
       )
        
     )
