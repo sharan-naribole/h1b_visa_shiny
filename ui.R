@@ -8,6 +8,7 @@ library(shinythemes)
 library(shinyjs)
 
 # List of choices for States input
+# Entire USA or particular state
 states = toupper(c("usa","alaska","alabama","arkansas","arizona","california","colorado",
   "connecticut","district of columbia","delaware","florida","georgia",
   "hawaii","iowa","idaho","illinois","indiana","kansas","kentucky",
@@ -32,6 +33,13 @@ shinyUI(
   
   # Application title
   titlePanel("H-1B Visa Petitions Data Exploration"),
+  
+  # Inputs Summary
+  # Year: numeric vector. Size of one or two elements
+  # Job Type: Up to three text inputs
+  # Metric: one drop-down text selection
+  # Employer Name: up to three text inputs
+  # No. of cateogories in plots
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
@@ -75,7 +83,7 @@ shinyUI(
          br(),
 
          h3("Job Type"),
-         h6("Type up to three job type inputs. If no match found for all inputs, the app considers all Job Titles in the records for Job Type."),
+         h6("Type up to three job type inputs. If no match found in records for all inputs, all Job Titles will be used."),
          
          div(
            id = "job_type",
@@ -86,6 +94,27 @@ shinyUI(
            textInput("job_type_3", "Job Type 3", "Machine Learning")
          ),
          
+         # Entire USA or a particular state in USA
+         selectInput("location",
+                     h3("Location"),
+                     choices = state_list),
+         
+         h3("Employer Name"),
+         h6("Type up to three job type inputs. If no match found in records for all inputs, all Employers will be used."),
+         div(
+           id = "employer",
+           textInput("employer_1", "Employer 1",""),
+           textInput("employer_2", "Employer 2",""),
+           textInput("employer_3", "Employer 3", "")
+         ),
+         
+         #metric input
+         # Metrics are computed for the main dataframe filtered by
+         # Year range, Job Types, Employer names, Location
+         # Total Visa Application: Total no. of petitions 
+         # Certified Visa Applications: No. of petitions with CASE_STATUS = CERTIFIED
+         # Wage: Median of the PREVAILING_WAGE column; median used for reducing the impact
+         # of outliers
          selectInput("metric",
                      h3("Metric"),
                      choices = list("Total Visa Applications" = "TotalApps",
@@ -94,26 +123,13 @@ shinyUI(
                                    )
          ),
          
-         selectInput("location",
-                     h3("Location"),
-                     choices = state_list),
-         
-         h3("Employer Name"),
-         h6("Defaults to All if no match found."),
-         div(
-           id = "employer",
-           textInput("employer_1", "Employer 1",""),
-           textInput("employer_2", "Employer 2",""),
-           textInput("employer_3", "Employer 3", "")
-         ),
-         
+         # No. of categories to be compared in each plot including the map plot
          sliderInput("Ntop",
-                     h3("No. of categories in plots"),
+                     h3("Plot Categories"),
                      min = 3,
                      max = 15,
                      value = 3)
          
-         #p(actionButton("updateEmployer", "Update Employers"), actionButton("resetEmployer", "Reset Employers"))
        ),
       conditionalPanel(condition="$('html').hasClass('shiny-busy')",
                        tags$div("Loading...",id="loadmessage"))
@@ -122,7 +138,7 @@ shinyUI(
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(
-        tabPanel("Debug", 
+        tabPanel("Debug",
                  verbatimTextOutput("debugJobList"),
                  br(),
                  verbatimTextOutput("debugJobInput"),
@@ -130,15 +146,66 @@ shinyUI(
                  verbatimTextOutput("debugEmployerList"),
                  br(),
                  verbatimTextOutput("debugEmployerInput"),
-                 
+
                  br(),
-                 
+
                  dataTableOutput("dataInput"),
-                 
+
                  br(),
-                 
+
                  verbatimTextOutput("metricInput")
                  ),
+        
+        tabPanel("About",
+                 
+                 tags$img(src = "http://fm.cnbc.com/applications/cnbc.com/resources/img/editorial/2014/02/28/101456986-184650923.530x298.jpg?v=1393621130", 
+                          alt = "H-1B Visa", align = "middle",width = "600px", height = "250px"),
+                 
+                 br(),
+                 
+                 br(),
+                 
+                 tags$p("Author: ", tags$a(href = "www.sharannaribole.com", "Sharan Naribole")),
+                 
+                 tags$p( "The ", tags$a(href="wikipedia.org/wiki/H-1B_visa","H-1B",target="_blank"), "is an employment-based, 
+                 non-immigrant visa for temporary foreign workers 
+                 in the United States. Every year, the US immigration department 
+                 hundreds of thousands of petitions. The Office of Foreign Labor Certification 
+                (OFLC) generates", tags$a(href="www.foreignlaborcert.doleta.gov/performancedata.cfm",
+                "immigration program data",target="_blank"), " that is useful information about the 
+                immigration programs including the H1-B visa."),
+                 
+                tags$p("This web app enables interactive
+                 data analysis on H-1B disclosure data for the period 2011-2016 consisting
+                 of nearly 3 million records.
+                 
+                The app takes multiple inputs from user and provides data visualization corresponding
+                to the related sub-section of the data set. Summary of the inputs:"),
+                 
+                 br(),
+                 
+                 tags$ul(
+                   tags$li(tags$div("Year:", style="color:#5DADE2"), "Slider input of time period. When a single value is chosen, only that year is considered for data analysis."), 
+                   tags$li(tags$div("Job Type: ", style="color:#5DADE2"), "Default inputs are Data Scientist, Data Engineer and Machine Learning. 
+                           These are selected based on my personal interest. Feel free to explore different job titles for e.g. Product Manager, Hardware Engineer.
+                           Type up to three job type inputs in the flexible text input. I avoided a drop-down menu as there are thousands of
+                           unique Job Titles in the dataset. If no match found in records for all the inputs, all Job Titles in the data subset based on other inputs
+                           will be used."), 
+                   tags$li(tags$div("Location:", style="color:#5DADE2"), "The granularity of the location parameter is State with the default option being the whole of United States"),
+                   tags$li(tags$div("Employer Name:", style="color:#5DADE2"), "The default inputs are left blank as that might be the most common use case. Explore data for specific employers for e.g., Google, Amazon etc.
+                           Pretty much similar in action to Job Type input."), 
+                   tags$li(tags$div("Plot Categories:", style="color:#5DADE2"), "Additional control parameter for upper limit on the number of categories
+                           to be used for data visualization.")
+                 ),
+                 
+                 br(),
+                 
+                 tags$p("GitHub source code for data transformations on raw H-1B disclosure data can be found ", 
+                        tags$a(href="https://git.io/vDyOE","here!", target= "_blank"), " And, the source code for 
+                                this Shiny app created using the transformed data can be found ", tags$a(href="https://git.io/vDy3J","here!") " Please email me at nsharan (at) rice.edu for any feedback and queries.")
+                 
+        ),  
+        
         tabPanel("Job Type",
                  plotOutput("job_type"),
                  br(),
