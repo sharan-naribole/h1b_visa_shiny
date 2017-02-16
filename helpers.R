@@ -1,28 +1,3 @@
-## Helper file
-word_match <- function(input, record) {
-  record <- trimws(tolower(record))
-  #print(paste("input:",input))
-  print(paste("record: ",record))
-  pos <- regexpr(input,record)
-  pos <- pos[1]
-  #print(paste("position: ",pos))
-  
-  if(pos == -1) {
-    return(FALSE)
-  } else {
-    before <- substr(record, pos -1, pos -1)
-    #print(paste("before:",before))
-    after <- substr(record, pos + nchar(input), pos + nchar(input))
-    #print(paste("after: ",after))
-    
-    if((before != "" & before != " ") | (after != "" & after != " ")) {
-      return(FALSE)
-    }
-    return(TRUE)
-  }
-}
-
-
 job_filter <- function(df,value_list) {
   if(length(value_list) == 0) {
     return(df %>%
@@ -33,10 +8,10 @@ job_filter <- function(df,value_list) {
   
   for(value in value_list){
     new_df <- rbind(new_df, df %>% 
-                      filter(word_match(value,JOB_TITLE) == TRUE) %>%
-                      mutate(JOB_INPUT_CLASS = value))
+                      filter(regexpr(value,JOB_TITLE,ignore.case=TRUE) != -1) %>%
+                      mutate(JOB_INPUT_CLASS = toupper(value)))
   }
-  return(new_df)
+  return(unique(new_df))
 }
 
 employer_filter <- function(df, value_list) {
@@ -47,10 +22,12 @@ employer_filter <- function(df, value_list) {
   new_df <- data.frame()
   
   for(value in value_list){
+    df$value_filt <- sapply(df$EMPLOYER_NAME, function(x,y) {return(word_match(x,y))}, x = value)
+    
     new_df <- rbind(new_df, df %>% 
-                      filter(word_match(value,EMPLOYER_NAME) == TRUE))
+                      filter(regexpr(value,EMPLOYER_NAME,ignore.case=TRUE) != -1))
   }
-  return(new_df)
+  return(unique(new_df))
 }
   
 plot_input <- function(df, x_feature, fill_feature, metric,filter = FALSE, ...) {
@@ -120,7 +97,7 @@ map_gen <- function(df,metric,USA,...) {
   
   g <- ggplot(USA, aes(x=long, y=lat)) + 
     geom_polygon() + xlab("Longitude (deg)") + ylab("Latitude(deg)") + 
-    geom_point(data=map_df, aes_string(x="lon", y="lat", alpha = metric, size = metric), color="yellow") + 
+    geom_point(data=map_df, aes_string(x="lon", y="lat", label = "WORKSITE", alpha = metric, size = metric), color="yellow") + 
     geom_label_repel(data=map_df %>% filter(WORKSITE %in% top_locations),aes_string(x="lon", y="lat",label = "WORKSITE"),
                      fontface = 'bold', color = 'black',
                      box.padding = unit(0.0, "lines"),

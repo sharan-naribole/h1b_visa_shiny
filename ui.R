@@ -1,17 +1,13 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
+# Author: Sharan Naribole
+# Filename: ui.R
+# H-1B Visa Petitions Dashboard web application to enable exploratory data analysis
+# on H-1B Visa applications disclosure data in the period 2011-2016
 
 library(shiny)
 library(shinythemes)
 library(shinyjs)
 
-## States
+# List of choices for States input
 states = toupper(c("usa","alaska","alabama","arkansas","arizona","california","colorado",
   "connecticut","district of columbia","delaware","florida","georgia",
   "hawaii","iowa","idaho","illinois","indiana","kansas","kentucky",
@@ -22,9 +18,7 @@ states = toupper(c("usa","alaska","alabama","arkansas","arizona","california","c
   "rhode island","south carolina","south dakota","tennessee","texas",
   "utah","virginia","vermont","washington","wisconsin",
   "west virginia","wyoming"))
-# List of choices for selectInput
 state_list <- as.list(states)
-# Name it
 names(state_list) <- states
 
 # Define UI for application that draws a histogram
@@ -43,6 +37,8 @@ shinyUI(
   sidebarLayout(
     sidebarPanel(
       
+      # CSS style for loading message whenever
+      # Shiny is busy
       tags$head(tags$style(type="text/css", "
              #loadmessage {
                            position: fixed;
@@ -59,35 +55,36 @@ shinyUI(
                            }
                            ")),
       
+      # Container unit for all inputs
+      # Helps in resetting all inputs to default by Reset button
       div(
       
          id ="inputs",  
        
+         # Compute button triggers server to update the outputs
          p(actionButton("resetAll", "Reset All Inputs"),
            actionButton("compute","Compute!", icon = icon("bar-chart-o"))),
          
+         # Year range determines the period for data analysis
          sliderInput("year",
                      h3("Year"),
                      min = 2011,
                      max = 2016,
                      value = c(2011,2016)),
          
-         #actionButton("resetYear", "Reset Year Range"),
-         
          br(),
 
          h3("Job Type"),
-         h6("Defaults to All if no match found."),
+         h6("Type up to three job type inputs. If no match found for all inputs, the app considers all Job Titles in the records for Job Type."),
          
          div(
            id = "job_type",
            
+           # Default inputs selected from my personal interest
            textInput("job_type_1", "Job Type 1","Data Scientist"),
            textInput("job_type_2", "Job Type 2","Data Engineer"),
            textInput("job_type_3", "Job Type 3", "Machine Learning")
          ),
-         
-         #p(actionButton("updateJobType", "Update Job Type"), actionButton("resetJobType", "Reset Job Type")),
          
          selectInput("metric",
                      h3("Metric"),

@@ -1,6 +1,7 @@
 word_matches <- function(input, record) {
   record <- trimws(tolower(record))
-  #print(paste("input:",input))
+  input <- trimws(tolower(input))
+  print(paste("input:",input))
   print(paste("record: ",record))
   pos <- regexpr(input,record)
   pos <- pos[1]
@@ -11,14 +12,16 @@ word_matches <- function(input, record) {
   } else {
     before <- substr(record, pos -1, pos -1)
     print(paste("before:",before))
-    after <- substr(record, pos + nchar(input), pos + nchar(input))
-    print(paste("after: ",after))
-    
-    if((before != "" & before != " ") | (after != "" & after != " ")) {
+    if(trimws(before) != "") {
       return(FALSE)
     }
-    return(TRUE)
+    after <- substr(record, pos + nchar(input), pos + nchar(input))
+    print(paste("after: ",after))
+    if(!(trimws(after) %in% c("",",","."))) {
+      return(FALSE)
+    }
   }
+  return(TRUE)
 }
 
 job_filteres <- function(df,value_list) {
@@ -30,11 +33,29 @@ job_filteres <- function(df,value_list) {
   new_df <- data.frame()
   
   for(value in value_list){
+    df$value_filt <- sapply(df$JOB_TITLE, function(x,y) {return(word_matches(x,y))}, x = value)
+    
     new_df <- rbind(new_df, df %>% 
-                      filter(word_match(value,JOB_TITLE) == TRUE) %>%
+                      filter(value_filt == TRUE) %>%
+                      select(- value_filt) %>%
                       mutate(JOB_INPUT_CLASS = value))
   }
-  return(new_df)
+  return(unique(new_df))
 }
 
-job_filteres(kk %>% filter(regexpr('data scientist', JOB_TITLE) != -1),c("data scientist"))
+employer_filteres <- function(df, value_list) {
+  if(length(value_list) == 0) {
+    return(df)
+  }
+  
+  new_df <- data.frame()
+  
+  for(value in value_list){
+    df$value_filt <- sapply(df$EMPLOYER_NAME, function(x,y) {return(word_matches(x,y))}, x = value)
+    
+    new_df <- rbind(new_df, df %>% 
+                      filter(value_filt == TRUE) %>%
+                      select(- value_filt))
+  }
+  return(unique(new_df))
+}
