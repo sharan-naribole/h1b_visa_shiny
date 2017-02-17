@@ -201,8 +201,8 @@ shinyUI(
                  br(),
                  
                  tags$p("GitHub source code for data transformations on raw H-1B disclosure data can be found ", 
-                        tags$a(href="https://git.io/vDyOE","here!", target= "_blank"), " And, the source code for 
-                                this Shiny app created using the transformed data can be found ", tags$a(href="https://git.io/vDy3J","here!"), " Please email me at nsharan (at) rice.edu for any feedback and queries.")
+                        tags$a(href="https://github.com/sharan-naribole/H1B_visa_eda","here!", target= "_blank"), " And, the source code for 
+                                this Shiny app created using the transformed data can be found ", tags$a(href="https://github.com/sharan-naribole/H1b_visa_shiny","here!"), " Please email me at nsharan (at) rice.edu for any feedback and queries.")
                  
         ),  
         
