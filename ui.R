@@ -165,7 +165,7 @@ shinyUI(
                  
                  br(),
                  
-                 tags$p("Author: ", tags$a(href = "www.sharannaribole.com", "Sharan Naribole")),
+                 tags$p("Author: ", tags$a(href = "www.sharannaribole.com", "Sharan Naribole", target="_blank")),
                  
                  tags$p( "The ", tags$a(href="wikipedia.org/wiki/H-1B_visa","H-1B",target="_blank"), "is an employment-based, 
                  non-immigrant visa for temporary foreign workers 
