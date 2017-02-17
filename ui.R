@@ -138,23 +138,29 @@ shinyUI(
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(
-        tabPanel("Debug",
-                 verbatimTextOutput("debugJobList"),
+        # tabPanel("Debug",
+        #          verbatimTextOutput("debugJobList"),
+        #          br(),
+        #          verbatimTextOutput("debugJobInput"),
+        #          br(),
+        #          verbatimTextOutput("debugEmployerList"),
+        #          br(),
+        #          verbatimTextOutput("debugEmployerInput"),
+        # 
+        #          br(),
+        # 
+        #          dataTableOutput("dataInput"),
+        # 
+        #          br(),
+        # 
+        #          verbatimTextOutput("metricInput")
+        #          ),
+        # 
+        
+        tabPanel("Map",
+                 plotOutput("map"),
                  br(),
-                 verbatimTextOutput("debugJobInput"),
-                 br(),
-                 verbatimTextOutput("debugEmployerList"),
-                 br(),
-                 verbatimTextOutput("debugEmployerInput"),
-
-                 br(),
-
-                 dataTableOutput("dataInput"),
-
-                 br(),
-
-                 verbatimTextOutput("metricInput")
-                 ),
+                 dataTableOutput("map_table")),
         
         tabPanel("About",
                  
@@ -221,11 +227,8 @@ shinyUI(
                   plotOutput("employer"),
                   br(),
                   br(),
-                  dataTableOutput("employertable")),
-        tabPanel("Map",
-                 plotOutput("map"),
-                 br(),
-                 dataTableOutput("map_table"))
+                  dataTableOutput("employertable"))
+        
       )
        
     )
