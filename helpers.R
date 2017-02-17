@@ -121,7 +121,7 @@ plot_output <- function(df, x_feature,fill_feature,metric, xlabb,ylabb) {
   # ylabb         : y label
   # Output        : ggplot object
   
-  # 
+  # Prevents numbers on plot transforming into scientific notation
   options(scipen = 999)
   
   g <- ggplot(df, aes_string(x=x_feature,y=metric)) +
