@@ -157,10 +157,6 @@ shinyUI(
         #          ),
         # 
         
-        tabPanel("Map",
-                 plotOutput("map"),
-                 br(),
-                 dataTableOutput("map_table")),
         
         tabPanel("About",
                  
@@ -211,6 +207,11 @@ shinyUI(
                                 this Shiny app created using the transformed data can be found ", tags$a(href="https://github.com/sharan-naribole/H1b_visa_shiny","here!"), " Please email me at nsharan (at) rice.edu for any feedback and queries.")
                  
         ),  
+        
+        tabPanel("Map",
+                 plotOutput("map"),
+                 br(),
+                 dataTableOutput("map_table")),
         
         tabPanel("Job Type",
                  plotOutput("job_type"),
