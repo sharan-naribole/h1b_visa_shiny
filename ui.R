@@ -139,25 +139,6 @@ shinyUI(
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(
-        # tabPanel("Debug",
-        #          verbatimTextOutput("debugJobList"),
-        #          br(),
-        #          verbatimTextOutput("debugJobInput"),
-        #          br(),
-        #          verbatimTextOutput("debugEmployerList"),
-        #          br(),
-        #          verbatimTextOutput("debugEmployerInput"),
-        # 
-        #          br(),
-        # 
-        #          verbatimTextOutput("metricInput"),
-        # 
-        #          br(),
-        # 
-        #          dataTableOutput("debugTable")
-        #          ),
-
-        
         
         tabPanel("About",
 
@@ -168,7 +149,7 @@ shinyUI(
 
                  br(),
 
-                 tags$p("Author: ", tags$a(href = "www.sharannaribole.com", "Sharan Naribole", target="_blank")),
+                 tags$p("Author: Sharan Naribole,", tags$a(href="https://github.com/sharan-naribole/H1b_visa_shiny", "GitHub repo", target= "_blank")),
 
                  tags$p( "The ", tags$a(href="wikipedia.org/wiki/H-1B_visa","H-1B",target="_blank"), "is an employment-based,
                  non-immigrant visa for temporary foreign workers

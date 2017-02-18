@@ -14,8 +14,8 @@ library(stats)
 library(rdrop2)
 library(mapproj)
 
+# Dropbox Authentication
 token <- readRDS("droptoken.rds")
-
 drop_get(path = 'h1b_data/h1b_shiny_compact.rds',
          local_file = 'h1b_shiny_compact.rds', 
          dtoken = token, 
@@ -24,9 +24,6 @@ drop_get(path = 'h1b_data/h1b_shiny_compact.rds',
 
 h1b_df <- readRDS('h1b_shiny_compact.rds')
 
-
-#h1b_df <- readRDS("./data/h1b_shiny.rds")
-#h1b_df <- h1b_df %>% select(YEAR,EMPLOYER_NAME,WORKSITE_STATE_FULL, PREVAILING_WAGE, CASE_STATUS, WORKSITE, JOB_TITLE)
 
 # H-1B Visa transformed dataset
 # Data transformation source code available at https://github.com/sharan-naribole/H1B_visa_eda
@@ -67,25 +64,6 @@ shinyServer(function(input, output) {
     reactive_inputs$Ntop <- input$Ntop
   })
   
-  
-  # output$debugEmployerList <- renderText(({
-  #   reactive_inputs$employer_list
-  #   #as.character(dim(employer_input()))
-  # }))
-  # 
-  # output$debugJobList <- renderText({
-  #   reactive_inputs$job_list
-  #   #as.character(dim(employer_input()))
-  # })
-  #   
-  # output$debugTable <- renderDataTable({
-  #   head(h1b_df %>% filter(YEAR %in% reactive_inputs$year))
-  #   
-  #   #dd <- if(reactive_inputs$location == 'USA') kk else kk %>% filter(WORKSITE_STATE_FULL == reactive_inputs$location)  
-  #   
-  #   #head(dd)
-  # })
-  
   ## Filtering based on input dimensions: year range, location, job type, employer
 
   # Filter year input
@@ -106,10 +84,6 @@ shinyServer(function(input, output) {
     job_filter(location_input(),reactive_inputs$job_list)
   })
 
-  output$debugJobInput <- renderText({
-    as.character(dim(job_input()))
-  })
-
   # Filtering based on employer names
   # If no match found, then use all Employers
   employer_input <- reactive({
@@ -120,11 +94,6 @@ shinyServer(function(input, output) {
       employer_filter(job_input(),reactive_inputs$employer_list)
     }
   })
-
-  output$debugEmployerInput <- renderText(({
-    #reactive_inputs$employer_list
-    as.character(dim(employer_input()))
-  }))
 
   # Final input data frame for plotting
   data_input <- reactive({
