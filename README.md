@@ -18,22 +18,28 @@ These are the standard set of files used to build a Shiny app!
 
 The inputs to the app can be provided in the side panel. The app takes multiple inputs from user and provides data visualization corresponding to the related sub-section of the data set. Summary of the inputs:
 
-- Year:
+### Year
+
 Slider input of time period. When a single value is chosen, only that year is considered for data analysis.
 
-- Job Type:
+### Job Type
+
 Default inputs are Data Scientist, Data Engineer and Machine Learning. These are selected based on my personal interest. Explore different job titles for e.g. Product Manager, Hardware Engineer. Type up to three job type inputs in the flexible text input. I avoided a drop-down menu as there are thousands of unique Job Titles in the dataset. If no match found in records for all the inputs, all Job Titles in the data subset based on other inputs will be used.
 
-- Location:
+### Location
+
 The granularity of the location parameter is State with the default option being the whole of United States.
 
-- Employer Name:
+### Employer Name
+
 The default inputs are left blank as that might be the most common use case. Explore data for specific employers for e.g., Google, Amazon etc. Pretty much similar in action to Job Type input.
 
-- Metric:
+### Metric
+
 The three input metric choices are Total number of H-1B Visa applications, Certified number of Visa Applications and median annual Wage.
 
-- Plot Categories:
+### Plot Categories
+
 Additional control parameter for upper limit on the number of categories to be used for data visualization. Default value is 3 and can be increased up to 15.
 
 ## App Outputs
@@ -52,8 +58,7 @@ Location tab compares the metric for the input jobs at different Worksites withi
 
 ### Employers
 
-The Employers tab output is similar to the Job Types tab with the only difference being the comparison of employers instead of Job Types. If no Employer inputs are provided or none of the provided match with any records in our dataset then all employers are considered. Figure 5 shows Facebook, Amazon and Microsoft as the leading employers for Data Science positions. - See more at: http://blog.nycdatascience.com/student-works/h-1b-visa-applications-exploration-using-shiny/#sthash.9zR5wvB2.dpuf
-
+The Employers tab output is similar to the Job Types tab with the only difference being the comparison of employers instead of Job Types. If no Employer inputs are provided or none of the provided match with any records in our dataset then all employers are considered. Figure 5 shows Facebook, Amazon and Microsoft as the leading employers for Data Science positions. 
 
 ## Acknowledgements
 
