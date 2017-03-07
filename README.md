@@ -69,3 +69,7 @@ The Employers tab output is similar to the Job Types tab with the only differenc
 - [rdrop2](https://github.com/karthik/rdrop2)
 
 - [lazyeval](https://cran.r-project.org/web/packages/lazyeval/index.html)
+
+## License
+
+Open sourced under the MIT License(LICENSE.md).
