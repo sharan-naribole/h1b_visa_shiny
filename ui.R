@@ -179,7 +179,7 @@ shinyUI(
                    tags$li(tags$div("Employer Name:", style="color:#5DADE2"), "The default inputs are left blank as that might be the most common use case. Explore data for specific employers for e.g., Google, Amazon etc.
                            Pretty much similar in action to Job Type input."),
                    tags$li(tags$div("Metric:", style="color:#5DADE2"), "The three input metric choices are Total number of H-1B Visa applications, Certified number of Visa 
-                           Applications and median annual Wage."),
+                           Applications and median annual Wage. Certified applications are filed with USCIS for H-1B approval. For more details, read this", tags$a(href="https://www.kaggle.com/nsharan/h-1b-visa/discussion/30691","discussion on Kaggle.", target= "_blank")),
                    tags$li(tags$div("Plot Categories:", style="color:#5DADE2"), "Additional control parameter for upper limit on the number of categories
                            to be used for data visualization.")
                  )
